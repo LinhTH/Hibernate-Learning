@@ -17,7 +17,7 @@ import javax.validation.constraints.Size;
 public class Question {
 	@Id
 	@GeneratedValue(generator = "question_generator")
-	@SequenceGenerator(name = "question_generator", sequenceName = "question_sequence", initialValue = 1000)
+	@SequenceGenerator(name = "question_generator", sequenceName = "question_sequence")
 	private Long id;
 
 	@NotBlank
@@ -26,6 +26,10 @@ public class Question {
 
 	@Column(columnDefinition = "text")
 	private String description;
+	
+	@org.hibernate.annotations.Type(type = "yes_no")
+	@Column(nullable = true)
+	private boolean verified;
 
 	public Long getId() {
 		return id;
@@ -50,5 +54,13 @@ public class Question {
 	public void setDescription(String description) {
 		this.description = description;
 	}
-	
+
+	public boolean isVerified() {
+		return verified;
+	}
+
+	public void setVerified(boolean verified) {
+		this.verified = verified;
+	}
+
 }
