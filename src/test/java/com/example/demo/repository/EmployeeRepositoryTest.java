@@ -1,8 +1,10 @@
 package com.example.demo.repository;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Optional;
 
+import javax.persistence.EntityManager;
 import javax.transaction.Transactional;
 
 import org.junit.Assert;
@@ -20,6 +22,12 @@ import com.example.demo.model.Employee;
 public class EmployeeRepositoryTest {
 	@Autowired
 	EmployeeRepository employeeRepository;
+	
+	@Autowired
+	EmployeeRepo employeeRepo;
+	
+	@Autowired
+	EntityManager em;
 	
 	@Test
 	public void contextLoads() {
@@ -45,5 +53,15 @@ public class EmployeeRepositoryTest {
 		Optional<Employee> employeeOpt = employeeRepository.findById(995L);
 		Assert.assertTrue(employeeOpt.isPresent());
 		Assert.assertEquals("Dmc", employeeOpt.get().getFirstName());
+	}
+	
+	@Test
+	public void getByCriteria() {
+		long startTx = System.currentTimeMillis();
+		List<Employee> result = employeeRepo.createQuery().withFirstName("Qewx").getResultList();
+		long endQuery = System.currentTimeMillis();
+		Assert.assertEquals(1, result.size());
+		System.out.println("TIme: " + (endQuery - startTx));
+	
 	}
 }

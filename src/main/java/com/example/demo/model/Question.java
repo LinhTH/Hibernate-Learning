@@ -1,13 +1,18 @@
 package com.example.demo.model;
 
 import javax.persistence.Column;
+import javax.persistence.Convert;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+
+import com.example.demo.converter.MonetaryAmountConverter;
+import com.example.demo.model.advanced.MonetaryAmount;
 
 @Entity
 @org.hibernate.annotations.Cache(
@@ -30,6 +35,14 @@ public class Question {
 	@org.hibernate.annotations.Type(type = "yes_no")
 	@Column(nullable = true)
 	private boolean verified;
+	
+	@NotNull
+	@Convert( // It is Optional as autoPlay is enabled
+			converter = MonetaryAmountConverter.class,
+			disableConversion = false
+	)
+	@Column(name = "price", length = 63)
+	private MonetaryAmount buyNowPrice;
 
 	public Long getId() {
 		return id;
@@ -63,4 +76,11 @@ public class Question {
 		this.verified = verified;
 	}
 
+	public MonetaryAmount getBuyNowPrice() {
+		return buyNowPrice;
+	}
+
+	public void setBuyNowPrice(MonetaryAmount buyNowPrice) {
+		this.buyNowPrice = buyNowPrice;
+	}
 }
