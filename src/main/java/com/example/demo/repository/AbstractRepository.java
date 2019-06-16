@@ -7,14 +7,15 @@ import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
+import javax.persistence.criteria.Path;
+import javax.persistence.criteria.Root;
 
 import org.hibernate.LockMode;
 import org.hibernate.Session;
 import org.springframework.stereotype.Service;
 
 /**
- * Inspired by
- * https://developer.jboss.org/wiki/GenericDataAccessObjects?_sscc=t
+ * Inspired by https://developer.jboss.org/wiki/GenericDataAccessObjects?_sscc=t
  */
 
 @Service
@@ -34,7 +35,7 @@ public abstract class AbstractRepository<T, ID extends Serializable> {
 		TypedQuery<T> query = em.createQuery("FROM " + getPersistentClass().getName(), getPersistentClass());
 		return query.getResultList();
 	}
-	
+
 	public T findById(ID id) {
 		return (T) getSession().load(getPersistentClass(), id);
 	}
@@ -46,7 +47,7 @@ public abstract class AbstractRepository<T, ID extends Serializable> {
 		} else {
 			entity = (T) getSession().load(getPersistentClass(), id);
 		}
-		
+
 		return entity;
 	}
 
@@ -54,14 +55,14 @@ public abstract class AbstractRepository<T, ID extends Serializable> {
 		getSession().saveOrUpdate(entity);
 		return entity;
 	}
-	
-    public void makeTransient(T entity) {  
-        getSession().delete(entity);  
-    }
-    
-    public void flush() {
-    	getSession().flush();
-    }
+
+	public void makeTransient(T entity) {
+		getSession().delete(entity);
+	}
+
+	public void flush() {
+		getSession().flush();
+	}
 
 	protected Session getSession() {
 		return em.unwrap(Session.class);

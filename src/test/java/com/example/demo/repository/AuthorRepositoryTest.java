@@ -50,12 +50,21 @@ public class AuthorRepositoryTest {
 	}
 	
 	@Test
+	public void shouldCountSuccessfully() {
+		long startTx = System.currentTimeMillis();
+		Long result = authorRepository.createQuery().withEmail("morar.brittany@example.net").count();
+		Assert.assertEquals(Long.valueOf(1L), result);
+		long endQuery = System.currentTimeMillis();
+		System.out.println("TIme: " + (endQuery - startTx));
+	}
+	
+	@Test
 	public void getByCriteria() {
 		long startTx = System.currentTimeMillis();
-		List<Author> result = authorRepository.createQuery().withEmail("morar.brittany@example.net").getResultList();
+		List<Author> result = authorRepository.createQuery().withEmail("francis26@example.com").getResultList();
 		Assert.assertFalse(result.isEmpty());
 		long endQuery = System.currentTimeMillis();
 		System.out.println("TIme: " + (endQuery - startTx));
-	
 	}
+	
 }

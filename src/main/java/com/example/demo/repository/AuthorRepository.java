@@ -14,68 +14,85 @@ import org.springframework.stereotype.Service;
 
 import com.example.demo.model.Author;
 import com.example.demo.model.Author_;
-import com.example.demo.model.Employee;
-import com.example.demo.model.Employee_;
 
 @Service
-public class AuthorRepository extends AbstractRepository<Author, Long>{
+public class AuthorRepository extends AbstractRepository<Author, Long> {
 	public Builder createQuery() {
-        return new Builder(em);
-    }
-	
+		return new Builder(em);
+	}
+
 	public static final class Builder {
-        private EntityManager entityManager;
-        private CriteriaBuilder criteriaBuilder;
-        private CriteriaQuery<Author> query;
-        private Root<Author> root;
-        
-        List<Predicate> predicates = new ArrayList<>();
-        
+		private EntityManager entityManager;
+		private CriteriaBuilder criteriaBuilder;
+		private CriteriaQuery<Author> query;
+		private Root<Author> root;
+		private final String ROOT_ALIAS = "authorRootAlias";
+
+		List<Predicate> predicates = new ArrayList<>();
+
 		Builder(EntityManager entityManager) {
 			this.entityManager = entityManager;
-            criteriaBuilder = entityManager.getCriteriaBuilder();
-            query = criteriaBuilder.createQuery(Author.class);
-            root = query.from(Author.class);
+			criteriaBuilder = entityManager.getCriteriaBuilder();
+			query = criteriaBuilder.createQuery(Author.class);
+			root = query.from(Author.class);
+			root.alias(ROOT_ALIAS);
+		}
+
+		public Builder withId(Long id) {
+			predicates.add(criteriaBuilder.equal(root.get(Author_.ID), id));
+			return this;
 		}
 		
-        public Builder withFirstName(String firstName) {
-            predicates.add(criteriaBuilder.equal(root.get(Author_.FIRST_NAME), firstName));
-            return this;
-        }
-        
-        public Builder withLastName(String lastName) {
-            predicates.add(criteriaBuilder.equal(root.get(Author_.LAST_NAME), lastName));
-            return this;
-        }
-        
-        public Builder withEmail(String email) {
-            predicates.add(criteriaBuilder.equal(root.get(Author_.EMAIL), email));
-            return this;
-        }
-        
-        public Builder withBirhtdate(Date birthdate) {
-            predicates.add(criteriaBuilder.equal(root.get(Author_.BIRTHDATE), birthdate));
-            return this;
-        }
-        
-        public List<Author> getResultList() {
-            query.select(root);
+		public Builder withFirstName(String firstName) {
+			predicates.add(criteriaBuilder.equal(root.get(Author_.FIRST_NAME), firstName));
+			return this;
+		}
 
-            if (!predicates.isEmpty()) {
-                query.where(predicates.toArray(new Predicate[]{}));
-            }
+		public Builder withLastName(String lastName) {
+			predicates.add(criteriaBuilder.equal(root.get(Author_.LAST_NAME), lastName));
+			return this;
+		}
 
-            return entityManager.createQuery(query).getResultList();
-        }
+		public Builder withEmail(String email) {
+			predicates.add(criteriaBuilder.equal(root.get(Author_.EMAIL), email));
+			return this;
+		}
 
-        public Author getSingleResult() {
-            query.select(root);
+		public Builder withBirhtdate(Date birthdate) {
+			predicates.add(criteriaBuilder.equal(root.get(Author_.BIRTHDATE), birthdate));
+			return this;
+		}
 
-            if (!predicates.isEmpty()) {
-                query.where(predicates.toArray(new Predicate[]{}));
-            }
+		public List<Author> getResultList() {
+			query.select(root);
 
-            return entityManager.createQuery(query).getSingleResult();
-        }
+			if (!predicates.isEmpty()) {
+				query.where(predicates.toArray(new Predicate[] {}));
+			}
+
+			return entityManager.createQuery(query).getResultList();
+		}
+
+		public Long count() {
+			CriteriaQuery<Long> countQuery = criteriaBuilder.createQuery(Long.class);
+			Root<Author> countRoot = countQuery.from(query.getResultType());
+			countRoot.alias(root.getAlias()); //use the same alias in order to match the restrictions part and the selection part
+			countQuery.select(criteriaBuilder.count(countRoot));
+			if (!predicates.isEmpty()) {
+				countQuery.where(predicates.toArray(new Predicate[] {}));
+			}
+			return entityManager.createQuery(countQuery).getSingleResult();
+		}
+
+		public Author getSingleResult() {
+			query.select(root);
+
+			if (!predicates.isEmpty()) {
+				query.where(predicates.toArray(new Predicate[] {}));
+			}
+
+			return entityManager.createQuery(query).getSingleResult();
+		}
+
 	}
 }
