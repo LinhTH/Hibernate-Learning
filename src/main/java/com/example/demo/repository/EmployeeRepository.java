@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 
 import com.example.demo.model.Employee;
 
+@Deprecated
 @Service
 public class EmployeeRepository extends AbstractRepository<Employee, Long> {
 	 

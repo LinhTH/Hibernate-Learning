@@ -15,6 +15,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import com.example.demo.model.Employee;
 
+@Deprecated
 @RunWith(SpringRunner.class)
 @SpringBootTest
 @Transactional
