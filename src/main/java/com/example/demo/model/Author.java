@@ -1,8 +1,8 @@
 package com.example.demo.model;
 
 import java.io.Serializable;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.Date;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
@@ -38,7 +38,7 @@ public class Author implements Serializable {
 	private String email;
 
 	@Column
-	private Date birthdate;
+	private LocalDate birthdate;
 
 	@Column
 	private LocalDateTime added;
@@ -46,9 +46,9 @@ public class Author implements Serializable {
 	@OneToMany(mappedBy = "author", cascade = CascadeType.ALL)
 	private Set<Post> posts;
 
-	@Version
-	@Column
-	private long version;
+//	@Version
+//	@Column
+//	private long version;
 
 	public String getFirstName() {
 		return firstName;
@@ -74,11 +74,11 @@ public class Author implements Serializable {
 		this.email = email;
 	}
 
-	public Date getBirthdate() {
+	public LocalDate getBirthdate() {
 		return birthdate;
 	}
 
-	public void setBirthdate(Date birthdate) {
+	public void setBirthdate(LocalDate birthdate) {
 		this.birthdate = birthdate;
 	}
 

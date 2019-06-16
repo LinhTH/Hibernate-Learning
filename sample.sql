@@ -11,6 +11,20 @@ CREATE TABLE "authors" (
   UNIQUE ("email")
 );
 
+CREATE SEQUENCE "author_sequence"
+  INCREMENT 1
+  MINVALUE 1
+  MAXVALUE 9223372036854775807
+  START 1
+  CACHE 1;
+  
+ALTER SEQUENCE "author_sequence"
+        OWNED BY authors.id
+        ;
+ALTER TABLE authors
+        ALTER COLUMN id SET default nextval('author_sequence')
+        ;
+
 INSERT INTO "authors" ("id", "first_name", "last_name", "email", "birthdate", "added") VALUES (1, 'Greg', 'Predovic', 'morar.brittany@example.net', '1983-07-27', '1989-11-21 18:03:47');
 INSERT INTO "authors" ("id", "first_name", "last_name", "email", "birthdate", "added") VALUES (2, 'Madie', 'Jerde', 'francis26@example.com', '2002-07-09', '2013-08-17 01:42:41');
 INSERT INTO "authors" ("id", "first_name", "last_name", "email", "birthdate", "added") VALUES (3, 'Ansel', 'Lubowitz', 'mafalda96@example.com', '1988-04-02', '2004-11-07 02:14:27');
@@ -2024,6 +2038,20 @@ CREATE TABLE "posts" (
   "date" date NOT NULL,
   PRIMARY KEY ("id")
 );
+
+CREATE SEQUENCE "post_sequence"
+  INCREMENT 1
+  MINVALUE 1
+  MAXVALUE 9223372036854775807
+  START 1
+  CACHE 1;
+  
+ALTER SEQUENCE "post_sequence"
+        OWNED BY posts.id
+        ;
+ALTER TABLE posts
+        ALTER COLUMN id SET default nextval('post_sequence')
+        ;
 
 INSERT INTO "posts" ("id", "author_id", "title", "description", "content", "date") VALUES (1, 1, 'Eos aperiam magni porro alias tenetur.', 'Iste dignissimos sint doloremque qui. Illo id iure assumenda voluptas facilis corporis. Officiis nam quisquam ducimus dignissimos temporibus et.', 'Rerum nihil amet est tempore ab velit. Quia quidem quis nulla alias ut modi. Perspiciatis praesentium nobis omnis molestias modi quidem veritatis.', '2008-05-08');
 INSERT INTO "posts" ("id", "author_id", "title", "description", "content", "date") VALUES (2, 2, 'Reiciendis atque aut ut eos aut sunt.', 'Quia qui et quaerat sit dolore ipsa eaque. Corporis dolorem unde qui magni dolore eligendi quis. Alias voluptates in animi quis.', 'Repellat dolores magni error qui et qui quae enim. Accusamus libero quisquam quis vero. Ipsum tempore quas occaecati in nihil quidem. Voluptatem autem eum praesentium deserunt qui voluptates.', '2012-12-23');

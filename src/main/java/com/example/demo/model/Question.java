@@ -16,6 +16,7 @@ import javax.validation.constraints.Size;
 import com.example.demo.converter.MonetaryAmountConverter;
 import com.example.demo.model.advanced.MonetaryAmount;
 
+@Deprecated
 @Entity
 @org.hibernate.annotations.Cache(usage = org.hibernate.annotations.CacheConcurrencyStrategy.READ_WRITE) // Need to check
 @Table(name = "questions")
