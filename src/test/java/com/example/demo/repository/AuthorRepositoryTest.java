@@ -13,7 +13,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import com.example.demo.model.Author;
-import com.example.demo.model.Employee;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -44,6 +43,9 @@ public class AuthorRepositoryTest {
 		Author author = authorRepository.getOne(5L);
 		Assert.assertNotNull(author);
 		Assert.assertFalse(author.getPosts().isEmpty());
+		
+		List<Author> authors = authorRepository.findAll();
+		Assert.assertTrue(authors.size() >= 2000);
 	}
 	
 
