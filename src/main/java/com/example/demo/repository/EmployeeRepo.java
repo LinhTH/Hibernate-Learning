@@ -13,29 +13,27 @@ import javax.persistence.criteria.Root;
 import org.springframework.stereotype.Service;
 
 import com.example.demo.model.Employee;
-import com.example.demo.model.dto.EmployeeDTO;
-import com.example.demo.repository.EmployeeRepository.Builder;
 
 @Service
 public class EmployeeRepo {
 	 @PersistenceContext
      private EntityManager em;
-	 
+	  
 	 public Builder createQuery() {
 	        return new Builder(em);
 	    }
 		
 		public static final class Builder {
-	        private EntityManager entityManager;
+	        private EntityManager em;
 	        private CriteriaBuilder criteriaBuilder;
 	        private CriteriaQuery<Employee> query;
 	        private Root<Employee> root;
 	        
 	        List<Predicate> predicates = new ArrayList<>();
 	        
-			Builder(EntityManager entityManager) {
-				this.entityManager = entityManager;
-	            criteriaBuilder = entityManager.getCriteriaBuilder();
+			Builder(EntityManager em) {
+				this.em = em;
+	            criteriaBuilder = em.getCriteriaBuilder();
 	            query = criteriaBuilder.createQuery(Employee.class);
 	            root = query.from(Employee.class);
 			}
@@ -62,7 +60,17 @@ public class EmployeeRepo {
 	                query.where(predicates.toArray(new Predicate[]{}));
 	            }
 
-	            return entityManager.createQuery(query).getResultList();
+	            return em.createQuery(query).getResultList();
+	        }
+	        
+	        public List<Employee> getTopResultList(int top) {
+	        	query.select(root);
+
+	            if (!predicates.isEmpty()) {
+	                query.where(predicates.toArray(new Predicate[]{}));
+	            }
+
+	            return em.createQuery(query).setMaxResults(top).getResultList();
 	        }
 
 	        public Employee getSingleResult() {
@@ -72,7 +80,7 @@ public class EmployeeRepo {
 	                query.where(predicates.toArray(new Predicate[]{}));
 	            }
 
-	            return entityManager.createQuery(query).getSingleResult();
+	            return em.createQuery(query).getSingleResult();
 	        }
 		}
 }

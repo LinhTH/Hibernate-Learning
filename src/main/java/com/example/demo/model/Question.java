@@ -5,6 +5,8 @@ import javax.persistence.Convert;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.NotBlank;
@@ -15,9 +17,7 @@ import com.example.demo.converter.MonetaryAmountConverter;
 import com.example.demo.model.advanced.MonetaryAmount;
 
 @Entity
-@org.hibernate.annotations.Cache(
-		usage = org.hibernate.annotations.CacheConcurrencyStrategy.READ_WRITE
-		)
+@org.hibernate.annotations.Cache(usage = org.hibernate.annotations.CacheConcurrencyStrategy.READ_WRITE) // Need to check
 @Table(name = "questions")
 public class Question {
 	@Id
@@ -31,16 +31,14 @@ public class Question {
 
 	@Column(columnDefinition = "text")
 	private String description;
-	
+
 	@org.hibernate.annotations.Type(type = "yes_no")
 	@Column(nullable = true)
 	private boolean verified;
-	
+
 	@NotNull
 	@Convert( // It is Optional as autoPlay is enabled
-			converter = MonetaryAmountConverter.class,
-			disableConversion = false
-	)
+			converter = MonetaryAmountConverter.class, disableConversion = false)
 	@Column(name = "price", length = 63)
 	private MonetaryAmount buyNowPrice;
 

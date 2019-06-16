@@ -2,12 +2,15 @@ package com.example.demo.model;
 
 import java.io.Serializable;
 import java.time.LocalDate;
+import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
@@ -46,6 +49,10 @@ public class Employee implements Serializable {
 
 	@Column(name = "subsidiary_id")
 	private Integer subsidiaryId;
+
+	@OneToMany
+	@JoinColumn(name = "employee_id", nullable = false)
+	private Set<Question> questions;
 
 	public Long getId() {
 		return id;
@@ -97,6 +104,14 @@ public class Employee implements Serializable {
 
 	public void setSubsidiaryId(Integer subsidiaryId) {
 		this.subsidiaryId = subsidiaryId;
+	}
+	
+	public Set<Question> getQuestions() {
+		return questions;
+	}
+
+	public void setQuestions(Set<Question> questions) {
+		this.questions = questions;
 	}
 
 	public static long getSerialversionuid() {

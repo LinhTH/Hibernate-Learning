@@ -2,7 +2,6 @@ package com.example.demo.repository;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Optional;
 
 import javax.persistence.EntityManager;
 import javax.transaction.Transactional;
@@ -43,24 +42,22 @@ public class EmployeeRepositoryTest {
 		employee.setJunk("12");
 		employee.setSubsidiaryId(12);
 		
-		Employee employee2 = employeeRepository.save(employee);
-		Assert.assertNotNull(employee2);
-		Assert.assertTrue(employee2.getId() > 0);
+		Long employeeId = employeeRepository.save(employee);
+		Assert.assertNotNull(employeeId);
+		Assert.assertTrue(employeeId > 0);
 	}
 	
 	@Test
 	public void getSuccessfully() {
-		Optional<Employee> employeeOpt = employeeRepository.findById(995L);
-		Assert.assertTrue(employeeOpt.isPresent());
-		Assert.assertEquals("Dmc", employeeOpt.get().getFirstName());
+		Employee employee = employeeRepository.getOne(995L);
+		Assert.assertEquals("Dmc", employee.getFirstName());
 	}
 	
 	@Test
 	public void getByCriteria() {
 		long startTx = System.currentTimeMillis();
-		List<Employee> result = employeeRepo.createQuery().withFirstName("Qewx").getResultList();
+		List<Employee> result = employeeRepo.createQuery().withPhoneNumber("6342").getTopResultList(1);
 		long endQuery = System.currentTimeMillis();
-		Assert.assertEquals(1, result.size());
 		System.out.println("TIme: " + (endQuery - startTx));
 	
 	}
