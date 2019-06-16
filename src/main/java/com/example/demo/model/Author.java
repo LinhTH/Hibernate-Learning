@@ -14,7 +14,6 @@ import javax.persistence.OneToMany;
 import javax.persistence.PrePersist;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
-import javax.persistence.Version;
 
 @Entity
 @Table(name = "authors")
@@ -49,6 +48,10 @@ public class Author implements Serializable {
 //	@Version
 //	@Column
 //	private long version;
+	
+	public Long getId() {
+		return id;
+	}
 
 	public String getFirstName() {
 		return firstName;

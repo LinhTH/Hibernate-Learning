@@ -49,7 +49,6 @@ public class AuthorRepositoryTest {
 		Assert.assertTrue(authors.size() >= 2000);
 	}
 	
-
 	@Test
 	public void getByCriteria() {
 		long startTx = System.currentTimeMillis();

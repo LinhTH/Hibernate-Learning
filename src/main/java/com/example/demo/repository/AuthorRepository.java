@@ -13,6 +13,9 @@ import javax.persistence.criteria.Root;
 import org.springframework.stereotype.Service;
 
 import com.example.demo.model.Author;
+import com.example.demo.model.Author_;
+import com.example.demo.model.Employee;
+import com.example.demo.model.Employee_;
 
 @Service
 public class AuthorRepository extends AbstractRepository<Author, Long>{
@@ -36,22 +39,22 @@ public class AuthorRepository extends AbstractRepository<Author, Long>{
 		}
 		
         public Builder withFirstName(String firstName) {
-            predicates.add(criteriaBuilder.equal(root.get("firstName"), firstName));
+            predicates.add(criteriaBuilder.equal(root.get(Author_.FIRST_NAME), firstName));
             return this;
         }
         
         public Builder withLastName(String lastName) {
-            predicates.add(criteriaBuilder.equal(root.get("lastName"), lastName));
+            predicates.add(criteriaBuilder.equal(root.get(Author_.LAST_NAME), lastName));
             return this;
         }
         
         public Builder withEmail(String email) {
-            predicates.add(criteriaBuilder.equal(root.get("email"), email));
+            predicates.add(criteriaBuilder.equal(root.get(Author_.EMAIL), email));
             return this;
         }
         
         public Builder withBirhtdate(Date birthdate) {
-            predicates.add(criteriaBuilder.equal(root.get("birthdate"), birthdate));
+            predicates.add(criteriaBuilder.equal(root.get(Author_.BIRTHDATE), birthdate));
             return this;
         }
         
