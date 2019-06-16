@@ -7,15 +7,13 @@ import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Root;
 
+import org.hibernate.LockMode;
 import org.hibernate.Session;
 import org.springframework.stereotype.Service;
 
 /**
- * Insprired by
+ * Inspired by
  * https://developer.jboss.org/wiki/GenericDataAccessObjects?_sscc=t
  */
 
@@ -36,17 +34,36 @@ public abstract class AbstractRepository<T, ID extends Serializable> {
 		TypedQuery<T> query = em.createQuery("FROM " + getPersistentClass().getName(), getPersistentClass());
 		return query.getResultList();
 	}
-
-	public T getOne(ID id) {
+	
+	public T findById(ID id) {
 		return (T) getSession().load(getPersistentClass(), id);
 	}
 
-	@SuppressWarnings("unchecked")
-	public ID save(T entity) {
-		return (ID) getSession().save(entity);
+	public T findById(ID id, boolean lock) {
+		T entity;
+		if (lock) {
+			entity = (T) getSession().load(getPersistentClass(), id, LockMode.PESSIMISTIC_WRITE);
+		} else {
+			entity = (T) getSession().load(getPersistentClass(), id);
+		}
+		
+		return entity;
 	}
 
-	private Session getSession() {
+	public T makePersistent(T entity) {
+		getSession().saveOrUpdate(entity);
+		return entity;
+	}
+	
+    public void makeTransient(T entity) {  
+        getSession().delete(entity);  
+    }
+    
+    public void flush() {
+    	getSession().flush();
+    }
+
+	protected Session getSession() {
 		return em.unwrap(Session.class);
 	}
 

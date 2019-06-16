@@ -33,14 +33,15 @@ public class AuthorRepositoryTest {
 		author.setBirthdate(LocalDate.now());
 		author.setEmail("email@email.com");
 		
-		Long authorId = authorRepository.save(author);
-		Assert.assertTrue(authorId > 0);
+		Author actual = authorRepository.makePersistent(author);
+		Assert.assertNotNull(actual);
+		Assert.assertNotNull(actual.getId());
 		
 	}
 	
 	@Test
 	public void getSuccessfully() {
-		Author author = authorRepository.getOne(5L);
+		Author author = authorRepository.findById(5L);
 		Assert.assertNotNull(author);
 		Assert.assertFalse(author.getPosts().isEmpty());
 		
