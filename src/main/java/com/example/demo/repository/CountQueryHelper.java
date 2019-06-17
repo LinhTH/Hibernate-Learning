@@ -71,4 +71,6 @@ public class CountQueryHelper<T> {
 		return alias;
 
 	}
+	
+//	/https://github.com/chelu/jdal/blob/master/core/src/main/java/org/jdal/dao/jpa/JpaUtils.java
 }
