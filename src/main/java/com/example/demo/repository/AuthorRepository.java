@@ -9,6 +9,7 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
+import javax.persistence.criteria.Selection;
 
 import org.springframework.stereotype.Service;
 
@@ -26,7 +27,7 @@ public class AuthorRepository extends AbstractRepository<Author, Long> {
 		private CriteriaBuilder criteriaBuilder;
 		private CriteriaQuery<Author> query;
 		private Root<Author> root;
-		private final String ROOT_ALIAS = "authorRootAlias";
+//		private final String ROOT_ALIAS = "authorRootAlias";
 
 		List<Predicate> predicates = new ArrayList<>();
 
@@ -35,14 +36,14 @@ public class AuthorRepository extends AbstractRepository<Author, Long> {
 			criteriaBuilder = entityManager.getCriteriaBuilder();
 			query = criteriaBuilder.createQuery(Author.class);
 			root = query.from(Author.class);
-			root.alias(ROOT_ALIAS);
+//			root.alias(ROOT_ALIAS);
 		}
 
 		public Builder withId(Long id) {
 			predicates.add(criteriaBuilder.equal(root.get(Author_.ID), id));
 			return this;
 		}
-		
+
 		public Builder withFirstName(String firstName) {
 			predicates.add(criteriaBuilder.equal(root.get(Author_.FIRST_NAME), firstName));
 			return this;
@@ -74,13 +75,23 @@ public class AuthorRepository extends AbstractRepository<Author, Long> {
 		}
 
 		public Long count() {
-			CriteriaQuery<Long> countQuery = criteriaBuilder.createQuery(Long.class);
-			Root<Author> countRoot = countQuery.from(query.getResultType());
-			countRoot.alias(root.getAlias()); //use the same alias in order to match the restrictions part and the selection part
-			countQuery.select(criteriaBuilder.count(countRoot));
+//			CriteriaQuery<Long> countQuery = criteriaBuilder.createQuery(Long.class);
+//			Root<Author> countRoot = countQuery.from(query.getResultType());
+//			countRoot.alias(getOrCreateAlias(root)); // use the same alias in order to match the restrictions part and
+//														// the selection part
+//			countQuery.select(criteriaBuilder.count(countRoot));
+//			if (!predicates.isEmpty()) {
+//				countQuery.where(predicates.toArray(new Predicate[] {}));
+//			}
+			
+			
+			
+			CriteriaQuery<Long> countQuery = new CountQueryHelper<Author>(Author.class).getCountQuery(query, entityManager);
+			
 			if (!predicates.isEmpty()) {
 				countQuery.where(predicates.toArray(new Predicate[] {}));
 			}
+
 			return entityManager.createQuery(countQuery).getSingleResult();
 		}
 
@@ -92,6 +103,22 @@ public class AuthorRepository extends AbstractRepository<Author, Long> {
 			}
 
 			return entityManager.createQuery(query).getSingleResult();
+		}
+
+		private static volatile int aliasCount = 0;
+
+		public static synchronized <T> String getOrCreateAlias(Selection<T> selection) {
+			// reset alias count
+			if (aliasCount > 1000)
+				aliasCount = 0;
+
+			String alias = selection.getAlias();
+			if (alias == null) {
+				alias = "JDAL_generatedAlias" + aliasCount++;
+				selection.alias(alias);
+			}
+			return alias;
+
 		}
 
 	}
