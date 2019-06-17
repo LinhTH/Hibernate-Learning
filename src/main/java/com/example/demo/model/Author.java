@@ -8,6 +8,7 @@ import java.util.Set;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
@@ -42,7 +43,7 @@ public class Author implements Serializable {
 	@Column
 	private LocalDateTime added;
 
-	@OneToMany(mappedBy = "author", cascade = CascadeType.ALL)
+	@OneToMany(mappedBy = "author", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
 	private Set<Post> posts;
 
 //	@Version

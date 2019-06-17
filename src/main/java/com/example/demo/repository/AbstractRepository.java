@@ -7,8 +7,6 @@ import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
-import javax.persistence.criteria.Path;
-import javax.persistence.criteria.Root;
 
 import org.hibernate.LockMode;
 import org.hibernate.Session;
@@ -31,13 +29,14 @@ public abstract class AbstractRepository<T, ID extends Serializable> {
 				.getActualTypeArguments()[0];
 	}
 
+	// TODO this query generates lots of queries
 	public List<T> findAll() {
 		TypedQuery<T> query = em.createQuery("FROM " + getPersistentClass().getName(), getPersistentClass());
 		return query.getResultList();
 	}
 
 	public T findById(ID id) {
-		return (T) getSession().load(getPersistentClass(), id);
+		return (T) em.find(getPersistentClass(), id);
 	}
 
 	public T findById(ID id, boolean lock) {

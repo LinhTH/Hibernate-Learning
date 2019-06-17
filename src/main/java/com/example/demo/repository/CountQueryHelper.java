@@ -17,60 +17,67 @@ public class CountQueryHelper<T> {
 	}
 
 	public CriteriaQuery<Long> getCountQuery(CriteriaQuery<T> originalQuery, EntityManager em) {
-		CriteriaBuilder cb = em.getCriteriaBuilder();
+		CriteriaBuilder criteriaBuilder = em.getCriteriaBuilder();
 
 		// create count query
-		CriteriaQuery<Long> countQuery = cb.createQuery(Long.class);
-
+		CriteriaQuery<Long> countQuery = criteriaBuilder.createQuery(Long.class);
+		
 		// start copying root/joins/restrictions from the original query
 
 		// copy roots
+		int count = 0;
 		for (Root<?> fromRoot : originalQuery.getRoots()) {
 			Root<?> toRoot = countQuery.from(fromRoot.getJavaType());
-			toRoot.alias(getOrCreateAlias(fromRoot));
+			toRoot.alias(getOrCreateAlias(fromRoot, count++));
 			copyJoins(fromRoot, toRoot);
 		}
-
-		countQuery.select(cb.count(countQuery.from(this.typeParameterClass)));
-
+		
 		countQuery.groupBy(originalQuery.getGroupList());
 		countQuery.distinct(originalQuery.isDistinct());
-		
+
 		// copy restrictions
 		if (originalQuery.getGroupRestriction() != null) {
 			countQuery.having(originalQuery.getGroupRestriction());
 		}
-		
+
 		if (originalQuery.getRestriction() != null) {
 			countQuery.where(originalQuery.getRestriction());
 		}
 
+	
+		Root<T> countRoot = findRoot(countQuery);
+		countQuery.select(criteriaBuilder.count(countRoot));
 		return countQuery;
 	}
 
-	public static void copyJoins(From<?, ?> from, From<?, ?> to) {
+	public Root<T> findRoot(CriteriaQuery<?> query) {
+		for (Root<?> r : query.getRoots()) {
+			if (typeParameterClass.equals(r.getJavaType())) {
+				return (Root<T>) r.as(typeParameterClass);
+			}
+		}
+		return null;
+	}
+
+	public void copyJoins(From<?, ?> from, From<?, ?> to) {
+		int count = 0;
 		for (Join<?, ?> j : from.getJoins()) {
 			Join<?, ?> toJoin = to.join(j.getAttribute().getName(), j.getJoinType());
-			toJoin.alias(getOrCreateAlias(j));
+			//should create alias with prefix JOIN
+			toJoin.alias(getOrCreateAlias(j, count++));
 			copyJoins(j, toJoin);
 		}
 	}
-	
-	private static volatile int aliasCount = 0;
 
-	public static synchronized <T> String getOrCreateAlias(Selection<T> selection) {
-		// reset alias count
-		if (aliasCount > 1000)
-			aliasCount = 0;
-
+	public static  <T> String getOrCreateAlias(Selection<T> selection, int count) {
 		String alias = selection.getAlias();
 		if (alias == null) {
-			alias = "JDAL_generatedAlias" + aliasCount++;
+			alias = "JDAL_generatedAlias" + count;
 			selection.alias(alias);
 		}
 		return alias;
 
 	}
-	
+
 //	/https://github.com/chelu/jdal/blob/master/core/src/main/java/org/jdal/dao/jpa/JpaUtils.java
 }
