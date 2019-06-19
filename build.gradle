@@ -18,6 +18,10 @@ dependencies {
 	implementation('org.springframework.boot:spring-boot-starter-web')
 	implementation('org.postgresql:postgresql')
 	implementation 'org.threeten:threetenbp:1.3.3'
+	
+	implementation('net.ttddyy:datasource-proxy:1.5.1')
+	implementation('p6spy:p6spy:2.1.4')
+	
 	testImplementation('org.springframework.boot:spring-boot-starter-test')
 	
 	annotationProcessor('org.hibernate:hibernate-jpamodelgen:5.4.2.Final')
