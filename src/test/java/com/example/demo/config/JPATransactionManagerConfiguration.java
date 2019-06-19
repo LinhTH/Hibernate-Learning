@@ -23,12 +23,14 @@ import org.springframework.transaction.support.TransactionTemplate;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 
+import net.ttddyy.dsproxy.listener.ChainListener;
+import net.ttddyy.dsproxy.listener.DataSourceQueryCountListener;
 import net.ttddyy.dsproxy.listener.logging.SLF4JQueryLoggingListener;
 import net.ttddyy.dsproxy.support.ProxyDataSourceBuilder;
 
 @Configuration
 @PropertySource({ "/jdbc-postgresql.properties" })
-@ComponentScan(basePackages = "com.example.demo.repository")
+@ComponentScan(basePackages = "com.example.demo")
 @EnableTransactionManagement
 @EnableAspectJAutoProxy
 public class JPATransactionManagerConfiguration {
@@ -71,9 +73,11 @@ public class JPATransactionManagerConfiguration {
 
 	@Bean
 	public DataSource dataSource() {
-		SLF4JQueryLoggingListener loggingListener = new SLF4JQueryLoggingListener();
-		loggingListener.setQueryLogEntryCreator(new InlineQueryLogEntryCreator());
-		return ProxyDataSourceBuilder.create(actualDataSource()).name(DATA_SOURCE_PROXY_NAME).listener(loggingListener)
+		ChainListener listener = new ChainListener();
+		listener.addListener(new SLF4JQueryLoggingListener());
+		listener.addListener(new DataSourceQueryCountListener());
+		
+		return ProxyDataSourceBuilder.create(actualDataSource()).name(DATA_SOURCE_PROXY_NAME).listener(listener)
 				.build();
 	}
 
@@ -106,13 +110,11 @@ public class JPATransactionManagerConfiguration {
 	protected Properties additionalProperties() {
 		Properties properties = new Properties();
 		properties.setProperty("hibernate.dialect", hibernateDialect);
-		properties.setProperty("hibernate.hbm2ddl.auto", "create-drop");
-//		properties.put("hibernate.session_factory.statement_inspector",
-//				new LoggingStatementInspector("com.vladmihalcea.book.hpjp.hibernate.transaction"));
+		properties.setProperty("hibernate.hbm2ddl.auto", "none");
 		return properties;
 	}
 
 	protected String[] packagesToScan() {
-		return new String[] { "com.vladmihalcea.book.hpjp.hibernate.transaction.forum" };
+		return new String[] { "com.example.demo" };
 	}
 }

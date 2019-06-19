@@ -25,7 +25,7 @@ public class Author implements Serializable {
 
 	@Id
 	@GeneratedValue(generator = "author_generator")
-	@SequenceGenerator(name = "author_generator", sequenceName = "author_sequence", initialValue = 1)
+	@SequenceGenerator(name = "author_generator", sequenceName = "author_sequence", initialValue = 2001)
 	private Long id;
 
 	@Column(name = "first_name", nullable = false)

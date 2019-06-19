@@ -21,7 +21,7 @@ import com.example.demo.model.Post_;
 
 @Service
 public class AuthorRepository extends AbstractRepository<Author, Long> {
-	public Builder createQuery() {
+	public Builder createQuery(EntityManager em) {
 		return new Builder(em);
 	}
 
@@ -70,9 +70,15 @@ public class AuthorRepository extends AbstractRepository<Author, Long> {
 		public Builder withPostTitle(String title) {
 			if (fromPost == null) {
 				fromPost = root.join(Author_.POSTS, JoinType.LEFT);
-				
-				// ATTENTION: even FetchType for POSTs is set to EAGER.
-				// In the JPQL, we must explicitly declare it in the query 
+			}
+
+			predicates.add(criteriaBuilder.equal(fromPost.get(Post_.TITLE), title));
+			return this;
+		}
+		
+		public Builder withFetchPostTitle(String title) {
+			if (fromPost == null) {
+				fromPost = root.join(Author_.POSTS, JoinType.LEFT);
 				root.fetch(Author_.POSTS);
 			}
 
