@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.List;
 
 import javax.persistence.EntityManager;
+import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Join;
@@ -30,6 +31,9 @@ public class AuthorRepository extends AbstractRepository<Author, Long> {
 		private CriteriaBuilder criteriaBuilder;
 		private CriteriaQuery<Author> query;
 		private Root<Author> root;
+		
+		private Integer firstResult;
+		private Integer maxResults;
 
 		List<Predicate> predicates = new ArrayList<>();
 
@@ -85,6 +89,21 @@ public class AuthorRepository extends AbstractRepository<Author, Long> {
 			predicates.add(criteriaBuilder.equal(fromPost.get(Post_.TITLE), title));
 			return this;
 		}
+		
+		public Builder orderBy(String title) {
+			query.orderBy(criteriaBuilder.asc(root.get(title)));
+			return this;
+		}
+		
+		public Builder setFirstResult(int number) {
+			firstResult = number;
+			return this;
+		}
+		
+		public Builder setMaxResults(int number) {
+			maxResults = number;
+			return this;
+		}
 
 		public List<Author> getResultList() {
 			query.select(root);
@@ -93,7 +112,14 @@ public class AuthorRepository extends AbstractRepository<Author, Long> {
 				query.where(predicates.toArray(new Predicate[] {}));
 			}
 			
-			return entityManager.createQuery(query).getResultList();
+			TypedQuery<Author> typedQuery = entityManager.createQuery(query);
+			
+			if (firstResult != null && maxResults != null) {
+				typedQuery.setFirstResult(firstResult);
+				typedQuery.setMaxResults(maxResults);
+			}
+			
+			return typedQuery.getResultList();
 		}
 
 		public Long count() {
