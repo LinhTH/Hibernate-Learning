@@ -51,6 +51,9 @@ public class JPATransactionManagerConfiguration {
 
 	@Value("${hibernate.dialect}")
 	private String hibernateDialect;
+	
+	@Value("${hibernate.hbm2ddl.auto}")
+	private String hibernateHbm2dll;
 
 	@Bean
 	public static PropertySourcesPlaceholderConfigurer properties() {
@@ -110,7 +113,7 @@ public class JPATransactionManagerConfiguration {
 	protected Properties additionalProperties() {
 		Properties properties = new Properties();
 		properties.setProperty("hibernate.dialect", hibernateDialect);
-		properties.setProperty("hibernate.hbm2ddl.auto", "none");
+		properties.setProperty("hibernate.hbm2ddl.auto", hibernateHbm2dll);
 		return properties;
 	}
 

@@ -1,6 +1,7 @@
 package com.example.demo;
 
-import java.time.LocalDate;
+import static org.junit.Assert.fail;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -9,7 +10,6 @@ import javax.persistence.PersistenceContext;
 import javax.transaction.Transactional;
 
 import org.hibernate.Session;
-import org.hibernate.Transaction;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -21,8 +21,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.transaction.TransactionException;
-import org.springframework.transaction.support.TransactionTemplate;
 
 import com.example.demo.config.JPATransactionManagerConfiguration;
 import com.example.demo.model.Author;
@@ -36,9 +34,6 @@ import com.example.demo.repository.AuthorRepository;
 public class ApplicationTests {
 
 	protected final Logger LOGGER = LoggerFactory.getLogger(getClass());
-
-	@Autowired
-	private TransactionTemplate transactionTemplate;
 
 	@PersistenceContext
 	private EntityManager entityManager;
